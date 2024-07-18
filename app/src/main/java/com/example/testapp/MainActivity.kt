@@ -9,14 +9,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,6 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,10 +48,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             TestAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Strawhats(modifier = Modifier.padding(innerPadding))
+                    Strawhats()
+
                 }
             }
         }
@@ -144,8 +152,6 @@ fun RatingCard(modifier: Modifier = Modifier) {
 }
 
 
-
-
 @Preview
 @Composable
 private fun RatingCardPreview() {
@@ -154,20 +160,57 @@ private fun RatingCardPreview() {
 
 @Composable
 fun infoCard(modifier: Modifier = Modifier) {
-    Card (
+    Card(
         modifier = Modifier.fillMaxWidth()
-    ){
+    ) {
         Row {
             Column(
-                modifier = Modifier.weight(1f).height(300.dp)
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(300.dp)
+                    .background(Color.Blue.copy(alpha = 0.5f))
             ) {
-                Text(text = "welcome to the world of one piece")
-                Text(text = "Story start with execution of Gol.D.Roger")
-                Text(text = "Main protagonist is Monkey.D.Luffy")
+                Column(
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Text(
+                        text = "welcome to the world of one piece",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Spacer(modifier = Modifier.height(23.dp))
+                    Text(
+                        text = "Story start with execution of Gol.D.Roger",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold
+
+                    )
+                    Spacer(modifier = Modifier.height(23.dp))
+                    Text(
+                        text = "Main protagonist is Monkey.D.Luffy",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
 
             }
-            Image(painter = painterResource(id = R.drawable.one_piece), contentDescription = null,
-                modifier = Modifier.weight(01f).height(300.dp))
+            Image(
+                painter = painterResource(id = R.drawable.one_piece), contentDescription = null,
+                modifier = Modifier
+                    .weight(01f)
+                    .height(300.dp)
+                    .drawBehind {
+                        drawCircle(
+                            color = Color.Blue.copy(alpha = 0.6f), radius = 250f, center = Offset(
+                                x = 250f,
+                                y = 400f
+                            )
+                        )
+                    }
+            )
+
         }
     }
 
@@ -179,6 +222,121 @@ private fun infoCardPreview() {
     infoCard()
 
 }
+
+@Composable
+fun TaskList(modifier: Modifier = Modifier) {
+    val myTasks = listOf(
+        "do laundry", "buy snacks", "sleep", "go to gym", "buy cloths", "buy shoes"
+
+    )
+    LazyColumn {
+        items(myTasks) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillParentMaxWidth()
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                Text(text = it, style = MaterialTheme.typography.headlineSmall)
+
+            }
+
+        }
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TaskListPreview() {
+    TaskList()
+
+}
+
+
+@Composable
+fun Strawhats(modifier: Modifier = Modifier) {
+    val OnePiece = listOf("Monkey.D.Luffy", "zoro", "Nami", "Brook", "jimbei")
+
+    val CrewImages = listOf(
+        R.drawable.luffy,
+        R.drawable.zoro_onepiece,
+        R.drawable.nami,
+        R.drawable.brook,
+        R.drawable.jimbei
+    )
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+
+    ) {
+        itemsIndexed(OnePiece) { index, name ->
+            val imgScale = 1f
+            Card(
+                colors = CardDefaults.cardColors(
+                    contentColor = Color.White
+
+                ),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(1f),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp
+                ),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = CrewImages[index]),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .weight(1f)
+                            .size(300.dp)
+                            .drawBehind {
+                                drawCircle(
+                                    color = Color.Blue.copy(alpha = 0.1f),
+                                    radius = 400f,
+                                )
+                                drawContext.transform.scale(
+                                    scaleX = imgScale,
+                                    scaleY = imgScale
+                                )
+                                drawContext.transform.translate(
+                                    left = 0f,
+                                    top = 100f
+                                )
+                                drawCircle(
+                                    color = Color.Black.copy(alpha = .2f),
+                                    radius = 300f,
+                                )
+
+                            }
+                    )
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+
+                }
+            }
+
+
+        }
+    }
+}
+
+
+
+
+
+
 
 
 
